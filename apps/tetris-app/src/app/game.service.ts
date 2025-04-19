@@ -39,13 +39,9 @@ export class GameService implements OnDestroy {
 
   socketStatus: WritableSignal<WebsocketStatus> = signal(WebsocketStatus.Init);
 
+  placedPieces = linkedSignal(() => 0);
 
-  gamePieces = computed(() => this.gameState().gamePieces || []);
-
-  next3Pieces = linkedSignal({
-    source: this.gamePieces,
-    computation: (gamePieces: TetrisPiece[] | undefined) => (gamePieces || []).slice(0, 3)
-  });
+  next3Pieces = computed(() => (this.gameState().gamePieces || []).slice(this.placedPieces(), 3).reverse());
 
   constructor() {
     this.initializeSocketConnection();
