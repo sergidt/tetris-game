@@ -1,0 +1,52 @@
+html {
+  height: 100vh;
+  margin: 0;
+  background-repeat: no-repeat;
+  background: linear-gradient(#f4eed1, #e9dca8, #d8bc83, #ba887c, #856871, #454d69);
+}
+
+.app-title {
+  font-family: 'blackblock', sans-serif;
+  font-size: 8em;
+  width: 100%;
+  text-align: center;
+  color: rgb(80, 71, 71);
+}
+
+body {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  overflow: hidden;
+}
+
+input {
+  border-radius: 5px;
+  border: solid 1px;
+  font-family: 'ErikSans', sans-serif;
+  padding: 1em;
+  font-size: 16px;
+  box-shadow: 0 3px 5px #aaa;
+}
+
+button {
+  font-family: 'ErikSans', sans-serif;
+  padding: 1em;
+  box-shadow: 0 3px 5px #aaa;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #383e52;
+  border: solid 1px;
+  color: white;
+}
+
+h1,
+h2 {
+  color: #FAFAFA;
+  mix-blend-mode: color-burn;
+  font-family: 'ErikSans', sans-serif;
+}
+
+h1 {
+  font-size: 8em;
+}

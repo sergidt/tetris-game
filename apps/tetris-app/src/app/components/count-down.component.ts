@@ -1,0 +1,27 @@
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { GameService } from '../game.service';
+
+@Component({
+  selector: 'app-count-down',
+  imports: [CommonModule, FormsModule],
+  template: `
+<h2>Get ready {{tetris.me()}}, the game is about to start in...</h2>
+<h1>{{tetris.gameState().countDown}}</h1>
+
+`,
+  styles: `
+  :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 8rem 0;
+  }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CountDownComponent {
+  tetris = inject(GameService);
+}
