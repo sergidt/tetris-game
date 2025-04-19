@@ -56,8 +56,9 @@ export class GameService {
   }
 
   async startGame() {
-    this.gameState.status = GameStatus.Playing;
     await this.spawnPieces();
+    this.gameState.status = GameStatus.Playing;
+    return new Promise((resolve) => resolve(this.getGameState()));
   }
 
 
@@ -71,7 +72,6 @@ export class GameService {
       });
     }
     this.gameState.gamePieces = spawnPieces;
-    return new Promise((resolve) => resolve(this.getGameState()));
   }
 
   movePiece(playerId: string, direction: 'left' | 'right' | 'down') {

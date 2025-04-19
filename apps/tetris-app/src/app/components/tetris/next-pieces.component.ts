@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { GameService } from '../../game.service';
 import { MiniPieceComponent } from "./mini-piece.component";
@@ -9,7 +9,7 @@ import { MiniPieceComponent } from "./mini-piece.component";
   imports: [CommonModule, FormsModule, MiniPieceComponent],
   template: `
   <div class="title">Next pieces</div>
-@for (piece of nextPieces(); track $index) {
+@for (piece of tetris.next3Pieces(); track $index) {
 <app-mini-piece [piece]="piece"/>
 }
   `,
@@ -19,7 +19,7 @@ import { MiniPieceComponent } from "./mini-piece.component";
     flex-direction: column;
     border: solid 2px  rgb(80, 71, 71);
     justify-content: center;
-    padding: 10px 10px 40px 30px;
+    padding: 10px 10px 40px 15px;
     width: 50px;
     border-radius: 10px;
     position: relative;
@@ -35,10 +35,4 @@ import { MiniPieceComponent } from "./mini-piece.component";
 })
 export class NextPiecesComponent {
   tetris = inject(GameService);
-
-  nextPieces = computed(() => this.tetris.pieces().slice(0, 3));
-
-  constructor() {
-    effect(() => console.log(this.nextPieces()));
-  }
 }

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TetrisPiece } from '@tetris-game/models';
-const BLOCK_SIZE = 12;
+const BLOCK_SIZE = 15;
 @Component({
   selector: 'app-mini-piece',
   imports: [CommonModule, FormsModule],
@@ -36,6 +36,7 @@ const BLOCK_SIZE = 12;
       height: ${BLOCK_SIZE}px;
       display: block;
       border: solid 1px  rgb(80, 71, 71);
+      box-sizing: border-box;
     }
   }
   `,

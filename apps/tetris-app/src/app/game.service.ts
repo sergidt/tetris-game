@@ -1,5 +1,5 @@
-import { computed, Injectable, OnDestroy, signal, WritableSignal } from '@angular/core';
-import { BOARD_WIDTH, GameState, GameStatus, SHAPES, TetrisPiece, WebsocketMessages, WebsocketProperties } from '@tetris-game/models';
+import { computed, effect, Injectable, linkedSignal, OnDestroy, signal, WritableSignal } from '@angular/core';
+import { GameState, GameStatus, TetrisPiece, WebsocketMessages, WebsocketProperties } from '@tetris-game/models';
 
 import { io, Socket } from 'socket.io-client';
 
@@ -39,20 +39,18 @@ export class GameService implements OnDestroy {
 
   socketStatus: WritableSignal<WebsocketStatus> = signal(WebsocketStatus.Init);
 
+
+  gamePieces = computed(() => this.gameState().gamePieces || []);
+
+  next3Pieces = linkedSignal({
+    source: this.gamePieces,
+    computation: (gamePieces: TetrisPiece[] | undefined) => (gamePieces || []).slice(0, 3)
+  });
+
   constructor() {
     this.initializeSocketConnection();
 
-    // TEMPORAL
-    const pieces = Object.values(SHAPES);
-    for (let i = 0; i < 1000; i++) {
-      this.pieces.set([
-        ...this.pieces(),
-        {
-          ...pieces[Math.floor(Math.random() * pieces.length)],
-          position: { x: Math.floor(BOARD_WIDTH / 2) - 1, y: 0 }
-        }
-      ]);
-    }
+    effect(() => console.log('[Tetris game]: Game state updated: ', this.gameState()));
   }
 
   private initializeSocketConnection() {
