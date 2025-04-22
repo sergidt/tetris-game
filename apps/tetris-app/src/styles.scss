@@ -2,7 +2,7 @@ html {
   height: 100vh;
   margin: 0;
   background-repeat: no-repeat;
-  background: linear-gradient(#f4eed1, #e9dca8, #d8bc83, #ba887c, #856871, #454d69);
+  background: linear-gradient(#323c91, #3d294f, #23182d);
 }
 
 .app-title {
@@ -10,7 +10,7 @@ html {
   font-size: 8em;
   width: 100%;
   text-align: center;
-  color: rgb(80, 71, 71);
+  color: white;
 }
 
 body {
@@ -22,11 +22,13 @@ body {
 
 input {
   border-radius: 5px;
-  border: solid 1px;
+  border: solid 1px white;
   font-family: 'ErikSans', sans-serif;
   padding: 1em;
   font-size: 16px;
+  color: white;
   box-shadow: 0 3px 5px #aaa;
+  background-color: transparent;
 }
 
 button {
@@ -35,15 +37,14 @@ button {
   box-shadow: 0 3px 5px #aaa;
   border-radius: 5px;
   font-size: 16px;
-  background-color: #383e52;
+  background-color: white;
   border: solid 1px;
-  color: white;
+  color: #23182d;
 }
 
 h1,
 h2 {
-  color: #FAFAFA;
-  mix-blend-mode: difference;
+  color: white;
   font-family: 'ErikSans', sans-serif;
 }
 

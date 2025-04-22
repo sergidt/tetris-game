@@ -16,9 +16,9 @@ import { GameService } from '../../game.service';
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: solid 4px white;
-    border-radius: 20px;
-    mix-blend-mode: exclusion;
+    border: solid 2px white;
+    border-radius: 4px;
+    color: white;
   }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

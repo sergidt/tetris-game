@@ -17,7 +17,7 @@ import { MiniPieceComponent } from "./mini-piece.component";
   :host {
     display: flex;
     flex-direction: column;
-    border: solid 2px  rgb(80, 71, 71);
+    border: solid 1px white;
     justify-content: center;
     padding: 10px 10px 40px 15px;
     width: 50px;
@@ -27,7 +27,7 @@ import { MiniPieceComponent } from "./mini-piece.component";
 
     .title {
       font-family: 'ErikSans', sans-serif;
-      color: #4a4242;
+      color: white;
     }
   }
   `,
