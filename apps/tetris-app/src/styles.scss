@@ -2,15 +2,15 @@ html {
   height: 100vh;
   margin: 0;
   background-repeat: no-repeat;
-  background: linear-gradient(#323c91, #3d294f, #23182d);
+  background: linear-gradient( #ffffff,  #eeeeee, #cccccc  );
 }
 
 .app-title {
   font-family: 'blackblock', sans-serif;
-  font-size: 8em;
+  font-size: 6em;
   width: 100%;
   text-align: center;
-  color: white;
+  color: #444444;
 }
 
 body {
@@ -22,29 +22,27 @@ body {
 
 input {
   border-radius: 5px;
-  border: solid 1px white;
+  border: solid 1px #444444;
   font-family: 'ErikSans', sans-serif;
   padding: 1em;
   font-size: 16px;
-  color: white;
-  box-shadow: 0 3px 5px #aaa;
-  background-color: transparent;
+  box-shadow: 0 3px 5px #888888;
 }
 
 button {
   font-family: 'ErikSans', sans-serif;
   padding: 1em;
-  box-shadow: 0 3px 5px #aaa;
+  box-shadow: 0 3px 5px #888888;
   border-radius: 5px;
   font-size: 16px;
   background-color: white;
   border: solid 1px;
-  color: #23182d;
+  color: #444444;
 }
 
 h1,
 h2 {
-  color: white;
+  color: #444444;
   font-family: 'ErikSans', sans-serif;
 }
 

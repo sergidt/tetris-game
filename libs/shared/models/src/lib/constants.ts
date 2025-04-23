@@ -13,5 +13,6 @@ export enum WebsocketMessages {
   GameState = 'gameState',
   Connect = 'connect',
   ConnectionError = 'connect_error',
-  CountDown = 'countDown'
+  CountDown = 'countDown',
+  PlayerJoined = 'PlayerJoined',
 }

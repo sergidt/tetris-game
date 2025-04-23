@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../game.service';
+import { TetrisEngine } from '../tetris.engine';
 
 @Component({
   selector: 'app-server-status',
@@ -19,7 +19,7 @@ import { GameService } from '../game.service';
     right: .5rem;
     font-family: 'ErikSans', sans-serif;
     font-size: 12px;
-    color: white;
+    color: #222222;
     line-height: 18px;
 
   }`,
@@ -28,6 +28,6 @@ import { GameService } from '../game.service';
 export class ServerStatusComponent {
   playerName: string | undefined = undefined;
 
-  game = inject(GameService);
+  game = inject(TetrisEngine);
 
 }

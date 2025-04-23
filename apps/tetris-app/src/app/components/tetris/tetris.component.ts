@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../../game.service';
+import { TetrisEngine } from '../../tetris.engine';
 import { TetrisBoardComponent } from "./board.component";
 import { keysComponent } from "./keys.component";
 import { NextPiecesComponent } from "./next-pieces.component";
@@ -27,6 +27,6 @@ import { NextPiecesComponent } from "./next-pieces.component";
 export class TetrisComponent {
 
 
-  tetris = inject(GameService);
+  tetris = inject(TetrisEngine);
 
 }

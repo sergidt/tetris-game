@@ -4,7 +4,7 @@ import { CountDownComponent } from "./components/count-down.component";
 import { JoinComponent } from "./components/join.component";
 import { ServerStatusComponent } from "./components/server-status.component";
 import { TetrisComponent } from "./components/tetris/tetris.component";
-import { GameService } from './game.service';
+import { TetrisEngine } from './tetris.engine';
 
 @Component({
   imports: [ServerStatusComponent, JoinComponent, CountDownComponent, TetrisComponent],
@@ -28,6 +28,6 @@ import { GameService } from './game.service';
   styles: ``,
 })
 export class AppComponent {
-  game = inject(GameService);
+  game = inject(TetrisEngine);
   GameStatus = GameStatus;
 }

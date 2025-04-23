@@ -35,7 +35,7 @@ const BLOCK_SIZE = 15;
       width: ${BLOCK_SIZE}px;
       height: ${BLOCK_SIZE}px;
       display: block;
-      border: solid 1px  rgb(80, 71, 71);
+      border: solid 1px  #444444;
       box-sizing: border-box;
     }
   }

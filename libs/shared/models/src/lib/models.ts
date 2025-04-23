@@ -3,8 +3,11 @@ export interface Position {
   y: number;
 }
 
+export type Board = string[][];
+export type PieceShape = number[][];
+
 export interface TetrisPiece {
-  shape: number[][];
+  shape: PieceShape;
   position: Position;
   color: string;
 }
@@ -13,7 +16,6 @@ export interface Player {
   id: string;
   name: string;
   score: number;
-  board: number[][];
 }
 
 export enum GameStatus {

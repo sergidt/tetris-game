@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../../game.service';
+import { TetrisEngine } from '../../tetris.engine';
 import { MiniPieceComponent } from "./mini-piece.component";
 
 @Component({
@@ -17,7 +17,7 @@ import { MiniPieceComponent } from "./mini-piece.component";
   :host {
     display: flex;
     flex-direction: column;
-    border: solid 1px white;
+    border: solid 1px #444444;
     justify-content: center;
     padding: 10px 10px 40px 15px;
     width: 50px;
@@ -27,12 +27,12 @@ import { MiniPieceComponent } from "./mini-piece.component";
 
     .title {
       font-family: 'ErikSans', sans-serif;
-      color: white;
+      color: #444444;
     }
   }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NextPiecesComponent {
-  tetris = inject(GameService);
+  tetris = inject(TetrisEngine);
 }

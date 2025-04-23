@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../../game.service';
+import { TetrisEngine } from '../../tetris.engine';
 
 @Component({
   selector: 'app-tetris-board',
@@ -16,7 +16,7 @@ import { GameService } from '../../game.service';
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: solid 2px white;
+    border: solid 2px #444444;
     border-radius: 4px;
     color: white;
   }
@@ -24,5 +24,5 @@ import { GameService } from '../../game.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TetrisBoardComponent {
-  tetris = inject(GameService);
+  tetris = inject(TetrisEngine);
 }
