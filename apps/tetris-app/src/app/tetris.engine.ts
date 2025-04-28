@@ -1,5 +1,6 @@
 import {
   computed,
+  effect,
   Injectable,
   linkedSignal,
   OnDestroy,
@@ -89,24 +90,25 @@ export class TetrisEngine implements OnDestroy {
 
   placedPieces = signal(0);
 
-  next3Pieces = computed(() =>
-    (this.gameState().gamePieces || []).slice(this.placedPieces(), 3).reverse()
-  );
-
-  currentPiece = linkedSignal(() => {
-    console.log('Current piece>>');
-    return structuredClone(
-      (this.gameState().gamePieces || [])[this.placedPieces()]
-    );
+  next3Pieces = computed(() => {
+    const gamePieces = this.gameState().gamePieces || [];
+    const placedPieces = this.placedPieces();
+    return gamePieces.slice(placedPieces, placedPieces + 3).reverse();
   });
+
+  currentPiece = linkedSignal(() =>
+    structuredClone((this.gameState().gamePieces || [])[this.placedPieces()])
+  );
 
   constructor() {
     this.initializeSocketConnection();
 
-    // effect(() => {
-    //   console.log('board: ');
-    //   console.table(this.board());
-    // });
+    effect(() => {
+      //   console.log('board: ');
+      //   console.table(this.board());
+      console.log('placed pieces: ', this.placedPieces());
+      //console.log('Next pieces: ', this.next3Pieces());
+    });
   }
 
   private initializeSocketConnection() {
@@ -415,7 +417,6 @@ export class TetrisEngine implements OnDestroy {
   }
 
   spawnNewPiece() {
-    console.log('Spawning new piece...');
     this.placedPieces.update((_) => _ + 1);
     this.movingPiece = this.currentPiece();
     if (!this.isValidMove(this.movingPiece!)) {
