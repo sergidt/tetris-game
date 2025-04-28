@@ -16,15 +16,15 @@ export class GameService {
   };
   private readonly logger = new Logger('GameService');
 
-  warmUpCallback: () => void | undefined;
+  startingCallback: () => void | undefined;
   gameOverCallback: () => void | undefined;
 
   constructor() {
     this.resetGame();
   }
 
-  setNotifiers(warmUpCb: () => void, gameOverCb: () => void) {
-    this.warmUpCallback = warmUpCb;
+  setNotifiers(startingCb: () => void, gameOverCb: () => void) {
+    this.startingCallback = startingCb;
     this.gameOverCallback = gameOverCb;
   }
 
@@ -39,7 +39,8 @@ export class GameService {
 
     this.logger.log(`${playerName} player joined the game`);
 
-    if (this.gameState.players.length === 2) {
+    if (this.gameState.players.length >= 1) {
+      // 2
       this.countDown();
     }
 
@@ -59,21 +60,22 @@ export class GameService {
       (p) => p.id !== playerId
     );
 
-    if (this.gameState.players.length === 2) {
+    if (this.gameState.players.length < 2) {
       this.gameState.status = GameStatus.WaitingPlayers;
     }
   }
 
   private countDown() {
-    this.gameState.status = GameStatus.WarmingUp;
-    this.warmUpCallback();
-    // this.gameState.status = GameStatus.Playing;
+    this.gameState.status = GameStatus.GettingReady;
+    this.startingCallback();
   }
 
-  async startGame() {
+  async startGame(notifyState: () => void) {
     await this.spawnPieces();
+    this.gameState.status = GameStatus.Start;
+    notifyState();
     this.gameState.status = GameStatus.Playing;
-    return new Promise((resolve) => resolve(this.getGameState()));
+    notifyState();
   }
 
   private async spawnPieces() {

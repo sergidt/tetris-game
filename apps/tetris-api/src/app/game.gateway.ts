@@ -33,7 +33,7 @@ export class GameGateway
     this.logger.log('Gateway initialized');
     this.logger.log(`Websocket namespace: ${WebsocketProperties.namespace}`);
     this.gameService.setNotifiers(
-      this.warmingUpMessages.bind(this),
+      this.countDown.bind(this),
       this.gameFinished.bind(this)
     );
   }
@@ -62,13 +62,13 @@ export class GameGateway
     );
   }
 
-  private warmingUpMessages() {
+  private countDown() {
     interval(1000)
       .pipe(take(4))
       .subscribe({
         next: (n) => this.server.emit(WebsocketMessages.CountDown, n),
         complete: () =>
-          this.gameService.startGame().then(() => this.broadcastGameState()),
+          this.gameService.startGame(this.broadcastGameState.bind(this)),
       });
   }
 

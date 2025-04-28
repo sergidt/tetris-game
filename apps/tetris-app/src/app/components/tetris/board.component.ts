@@ -7,19 +7,33 @@ import { TetrisEngine } from '../../tetris.engine';
   selector: 'app-tetris-board',
   imports: [CommonModule, FormsModule],
   template: `
-  board
+    <div class="game-board">
+      @for (row of tetris.board(); track $index) {
+      <div class="row">
+        @for (cell of row; track $index) {
+        <div class="cell" [style.background-color]="cell"></div>
+        }
+      </div>
+      }
+    </div>
   `,
   styles: `
-  :host {
-    height: 600px;
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: solid 2px #444444;
-    border-radius: 4px;
-    color: white;
-  }
+    .game-board {
+      border: 2px solid #333;
+      background-color: transparent;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .cell {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #333;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

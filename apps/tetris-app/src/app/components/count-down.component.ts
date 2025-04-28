@@ -8,7 +8,7 @@ import { TetrisEngine } from '../tetris.engine';
   imports: [CommonModule, FormsModule],
   template: `
     <h2>Get ready {{ tetris.me()?.name }}, the game is about to start in...</h2>
-    <h1>{{ tetris.gameState().countDown }}</h1>
+    <h1>{{ tetris.countDown() }}</h1>
   `,
   styles: `
     :host {
