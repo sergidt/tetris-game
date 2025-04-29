@@ -1,8 +1,8 @@
 export const WebsocketProperties = {
   namespace: '/tetris',
   path: '/socket.io',
-  port: 3000
-}
+  port: 3000,
+};
 
 export const BOARD_WIDTH = 10;
 export const BOARD_HEIGHT = 20;
@@ -15,4 +15,5 @@ export enum WebsocketMessages {
   ConnectionError = 'connect_error',
   CountDown = 'countDown',
   PlayerJoined = 'PlayerJoined',
+  NotifyGameOver = 'notifyGameOver',
 }

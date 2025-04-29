@@ -93,4 +93,17 @@ export class GameService {
   getGameState() {
     return this.gameState;
   }
+
+  playerGameIsOver(playerId: string) {
+    this.gameState = {
+      ...this.gameState,
+      status: GameStatus.GameOver,
+      players: this.gameState.players.map((player) => {
+        if (player.id === playerId) {
+          return { ...player, score: -1 };
+        }
+        return player;
+      }),
+    };
+  }
 }

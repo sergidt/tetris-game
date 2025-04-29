@@ -54,6 +54,12 @@ export class GameGateway
     return player;
   }
 
+  @SubscribeMessage(WebsocketMessages.NotifyGameOver)
+  gameOver(client: Socket, payload: { playerId: string }) {
+    this.gameService.playerGameIsOver(payload.playerId);
+    this.broadcastGameState();
+  }
+
   private broadcastGameState() {
     this.logger.log('sending Game state...');
     this.server.emit(

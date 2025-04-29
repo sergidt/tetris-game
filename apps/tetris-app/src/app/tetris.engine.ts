@@ -167,6 +167,12 @@ export class TetrisEngine implements OnDestroy {
     });
   }
 
+  notifyGameOver() {
+    this.socket?.emit(WebsocketMessages.NotifyGameOver, {
+      playerId: this.me()?.id,
+    });
+  }
+
   private cleanupSocketConnection() {
     if (this.socket) {
       this.socket.removeAllListeners();
@@ -312,19 +318,19 @@ export class TetrisEngine implements OnDestroy {
    */
   private clearLines() {
     console.log('Clearing lines...');
-    const board = this.board();
     let linesCleared = 0;
     for (let y = this.BOARD_HEIGHT - 1; y >= 0; y--) {
-      if (board[y].every((cell) => cell !== '')) {
-        board.splice(y, 1);
-        board.unshift(Array(this.BOARD_WIDTH).fill(''));
-        this.board.set(board);
+      if (this.auxBoard[y].every((cell) => cell !== '')) {
+        this.auxBoard.splice(y, 1);
+        this.auxBoard.unshift(Array(this.BOARD_WIDTH).fill(''));
+        this.board.set(this.auxBoard);
         linesCleared++;
         y++;
       }
     }
     if (linesCleared > 0) {
       this.score.update((score) => score + linesCleared * 100);
+      this.board.set(this.auxBoard);
     }
   }
 
@@ -420,7 +426,7 @@ export class TetrisEngine implements OnDestroy {
     this.placedPieces.update((_) => _ + 1);
     this.movingPiece = this.currentPiece();
     if (!this.isValidMove(this.movingPiece!)) {
-      this.gameOver();
+      this.notifyGameOver();
     }
 
     this.updateBoard();
