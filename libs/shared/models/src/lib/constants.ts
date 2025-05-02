@@ -9,12 +9,10 @@ export const BOARD_HEIGHT = 20;
 
 export enum WebsocketMessages {
   JoinGame = 'joinGame',
-  MovePiece = 'movePiece',
   GameState = 'gameState',
   Connect = 'connect',
   ConnectionError = 'connect_error',
   CountDown = 'countDown',
-  PlayerJoined = 'PlayerJoined',
   NotifyGameOver = 'notifyGameOver',
 }
 

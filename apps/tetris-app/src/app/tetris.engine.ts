@@ -141,15 +141,12 @@ export class TetrisEngine implements OnDestroy {
     this.socket?.on(WebsocketMessages.GameState, (state: GameState) => {
       this.log('Game state received:', state);
       this.gameState.set(state);
+      if (state.status === GameStatus.Start) this.startGame();
     });
 
     this.socket?.on(WebsocketMessages.CountDown, (countDown: number) =>
       this.countDown.set(3 - countDown)
     );
-
-    this.socket?.on(WebsocketMessages.GameState, (state: GameState) => {
-      if (state.status === GameStatus.Start) this.startGame();
-    });
   }
 
   private initializeBoard() {
