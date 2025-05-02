@@ -3,6 +3,7 @@ import {
   BOARD_WIDTH,
   GameState,
   GameStatus,
+  LOST,
   Player,
   SHAPES,
   TetrisPiece,
@@ -100,7 +101,7 @@ export class GameService {
       status: GameStatus.GameOver,
       players: this.gameState.players.map((player) => {
         if (player.id === playerId) {
-          return { ...player, score: -1 };
+          return { ...player, score: LOST };
         }
         return player;
       }),

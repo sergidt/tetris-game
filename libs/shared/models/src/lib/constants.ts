@@ -17,3 +17,5 @@ export enum WebsocketMessages {
   PlayerJoined = 'PlayerJoined',
   NotifyGameOver = 'notifyGameOver',
 }
+
+export const LOST = -1;
