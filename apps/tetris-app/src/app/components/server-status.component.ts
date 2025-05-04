@@ -7,15 +7,15 @@ import { TetrisEngine } from '../tetris.engine';
   selector: 'app-server-status',
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="start-screen">
+    <div class="state">
       <span>Connected to server:</span>
       <span>{{ game.conn.connected() }}</span>
     </div>
-    <div class="start-screen">
+    <div class="state">
       <span>Game status:</span>
       <span>{{ game.gameState().status }}</span>
     </div>
-    <div class="start-screen">
+    <div class="state">
       <span>Players connected:</span>
       <span>{{ game.gameState().players.length }}</span>
     </div>
@@ -29,8 +29,14 @@ import { TetrisEngine } from '../tetris.engine';
       font-size: 12px;
       color: #222222;
       line-height: 18px;
+    }
 
-    }`,
+    .state {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServerStatusComponent {

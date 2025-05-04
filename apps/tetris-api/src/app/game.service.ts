@@ -78,6 +78,9 @@ export class GameService {
     notifyState();
   }
 
+  /**
+   * Spawns 1000 pieces of Tetris in the game state.
+   */
   private async spawnPieces() {
     const pieces = Object.values(SHAPES);
     const spawnPieces: TetrisPiece[] = [];
@@ -94,6 +97,9 @@ export class GameService {
     return this.gameState;
   }
 
+  /**
+   * Notify the game that a player has lost.
+   */
   playerGameIsOver(playerId: string) {
     this.gameState = {
       ...this.gameState,

@@ -28,6 +28,7 @@ import { websocketConnection } from './ws-connection';
   providedIn: 'root',
 })
 export class TetrisEngine {
+  /// Websocket connection
   readonly conn = websocketConnection({
     server: 'http://localhost',
     port: WebsocketProperties.port,
@@ -39,6 +40,10 @@ export class TetrisEngine {
     Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(''))
   );
 
+  /**
+   * The auxBoard is used to store the intermediate state of the game, helping
+   * to manage the current piece's position and the board's state.
+   */
   auxBoard = Array.from({ length: BOARD_HEIGHT }, () =>
     Array(BOARD_WIDTH).fill('')
   );
@@ -60,6 +65,10 @@ export class TetrisEngine {
     this.gameState().players.find((p) => p.id === this.clientId)
   );
 
+  /**
+   * waitingUsers is a computed property that checks if the game is in
+   * the WaitingPlayers status and if the current player is not already in the game.
+   */
   waitingUsers = computed(() => {
     const { status, players } = this.gameState();
     return (
@@ -68,6 +77,10 @@ export class TetrisEngine {
     );
   });
 
+  /**
+   * joinedAndWaiting is a computed property that checks if the game is in
+   * the WaitingPlayers status and if the current player is already in the game.
+   */
   joinedAndWaiting = computed(() => {
     const { status, players } = this.gameState();
     return (

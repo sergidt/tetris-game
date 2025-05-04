@@ -11,13 +11,6 @@ export type StreamItem<T> =
       error: unknown;
     };
 
-enum WebsocketStatus {
-  Init = 'Init',
-  Connecting = 'Connecting',
-  Connected = 'Connected',
-  Error = 'Error',
-}
-
 export type WebsocketSendMessage =
   | {
       type: WebsocketMessages.JoinGame;
