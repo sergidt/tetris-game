@@ -40,14 +40,14 @@ export const SHAPES = {
       [0, 0, 0, 0],
       [0, 0, 0, 0],
     ],
-    color: '#00f0f0',
+    color: '#F6C2F3',
   },
   O: {
     shape: [
       [1, 1],
       [1, 1],
     ],
-    color: '#f0f000',
+    color: '#CDABEB',
   },
   T: {
     shape: [
@@ -55,7 +55,7 @@ export const SHAPES = {
       [1, 1, 1],
       [0, 0, 0],
     ],
-    color: '#a000f0',
+    color: '#C7CAFF',
   },
   L: {
     shape: [
@@ -63,7 +63,7 @@ export const SHAPES = {
       [1, 1, 1],
       [0, 0, 0],
     ],
-    color: '#f0a000',
+    color: '#C1EBC0',
   },
   J: {
     shape: [
@@ -71,7 +71,7 @@ export const SHAPES = {
       [1, 1, 1],
       [0, 0, 0],
     ],
-    color: '#0000f0',
+    color: '#FAFABE',
   },
   S: {
     shape: [
@@ -79,7 +79,7 @@ export const SHAPES = {
       [1, 1, 0],
       [0, 0, 0],
     ],
-    color: '#00f000',
+    color: '#F6CA94',
   },
   Z: {
     shape: [
@@ -87,6 +87,6 @@ export const SHAPES = {
       [0, 1, 1],
       [0, 0, 0],
     ],
-    color: '#f00000',
+    color: '#F09EA7',
   },
 };

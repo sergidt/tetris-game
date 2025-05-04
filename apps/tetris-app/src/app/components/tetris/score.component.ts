@@ -1,25 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TetrisEngine } from '../tetris.engine';
+import { TetrisEngine } from '../../tetris.engine';
 
 @Component({
-  selector: 'app-count-down',
+  selector: 'app-score',
   imports: [CommonModule, FormsModule],
-  template: `
-    <h2>Get ready {{ tetris.me()?.name }}, the game is about to start!!</h2>
-  `,
+  template: ` <h3>Score: {{ tetris.score() }}</h3> `,
   styles: `
     :host {
       display: flex;
-      flex-direction: column;
       justify-content: center;
-      align-items: center;
-      margin: 8rem 0;
+      color: #444444;
+      font-family: 'ErikSans', sans-serif;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CountDownComponent {
+export class ScoreComponent {
   tetris = inject(TetrisEngine);
 }

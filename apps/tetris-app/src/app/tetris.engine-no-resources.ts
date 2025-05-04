@@ -1,40 +1,38 @@
 import {
   computed,
-  effect,
   Injectable,
   linkedSignal,
+  OnDestroy,
   signal,
   WritableSignal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
-  BASE_INTERVAL,
   Board,
   BOARD_HEIGHT,
   BOARD_WIDTH,
-  CYCLE_DURATION,
   GameState,
   GameStatus,
-  INTERVAL_STEP,
-  MIN_INTERVAL,
   Position,
   TetrisPiece,
+  WebsocketMessages,
   WebsocketProperties,
 } from '@tetris-game/models';
-import { filter, interval, switchMap, takeUntil, timer } from 'rxjs';
-import { websocketConnection } from './ws-connection';
+import { filter, interval, takeUntil } from 'rxjs';
+
+import { io, Socket } from 'socket.io-client';
+
+enum WebsocketStatus {
+  Init = 'Init',
+  Connecting = 'Connecting',
+  Connected = 'Connected',
+  Error = 'Error',
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class TetrisEngine {
-  readonly conn = websocketConnection({
-    server: 'http://localhost',
-    port: WebsocketProperties.port,
-    namespace: WebsocketProperties.namespace,
-    path: WebsocketProperties.path,
-  });
-
+export class TetrisEngine implements OnDestroy {
   board: WritableSignal<Board> = signal(
     Array.from({ length: BOARD_HEIGHT }, () => Array(BOARD_WIDTH).fill(''))
   );
@@ -42,6 +40,10 @@ export class TetrisEngine {
   auxBoard = Array.from({ length: BOARD_HEIGHT }, () =>
     Array(BOARD_WIDTH).fill('')
   );
+
+  private socket: Socket | null = null;
+
+  socketStatus: WritableSignal<WebsocketStatus> = signal(WebsocketStatus.Init);
 
   gameState: WritableSignal<GameState> = signal({
     players: [],
@@ -54,17 +56,17 @@ export class TetrisEngine {
 
   gameOver$ = toObservable(this.gameOver);
 
-  clientId = crypto.randomUUID();
-
   me = linkedSignal(() =>
-    this.gameState().players.find((p) => p.id === this.clientId)
+    this.gameState().players.find((p) => p.id === this.clientId())
   );
+
+  clientId = signal(crypto.randomUUID());
 
   waitingUsers = computed(() => {
     const { status, players } = this.gameState();
     return (
       status === GameStatus.WaitingPlayers &&
-      !players.some((p) => p.id === this.clientId)
+      !players.some((p) => p.id === this.clientId())
     );
   });
 
@@ -72,7 +74,7 @@ export class TetrisEngine {
     const { status, players } = this.gameState();
     return (
       status === GameStatus.WaitingPlayers &&
-      players.some((p) => p.id === this.clientId)
+      players.some((p) => p.id === this.clientId())
     );
   });
 
@@ -90,13 +92,41 @@ export class TetrisEngine {
     structuredClone((this.gameState().gamePieces || [])[this.placedPieces()])
   );
 
-  gameStateEffect = effect(() => {
-    const message = this.conn.resource.value();
-    if (message) {
-      this.gameState.set(message.state);
-      if (this.gameState().status === GameStatus.Start) this.startGame();
-    }
-  });
+  constructor() {
+    this.initializeSocketConnection();
+  }
+
+  private initializeSocketConnection() {
+    this.socketStatus.set(WebsocketStatus.Connecting);
+
+    this.socket = io(
+      `http://localhost:${WebsocketProperties.port}${WebsocketProperties.namespace}`,
+      {
+        path: WebsocketProperties.path,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      }
+    );
+
+    this.setupSocketListeners();
+  }
+
+  private setupSocketListeners() {
+    this.socket?.on(WebsocketMessages.Connect, () => {
+      this.socketStatus.set(WebsocketStatus.Connected);
+    });
+
+    this.socket?.on(WebsocketMessages.ConnectionError, (error) => {
+      console.error('Connection error:', error);
+      this.socketStatus.set(WebsocketStatus.Error);
+    });
+
+    this.socket?.on(WebsocketMessages.GameState, (state: GameState) => {
+      this.gameState.set(state);
+      if (state.status === GameStatus.Start) this.startGame();
+    });
+  }
 
   private initializeBoard() {
     this.board.set(
@@ -105,11 +135,28 @@ export class TetrisEngine {
   }
 
   joinGame(playerName: string) {
-    this.conn.joinGame(this.clientId, playerName);
+    this.socket?.emit(WebsocketMessages.JoinGame, {
+      clientId: this.clientId(),
+      name: playerName,
+    });
   }
 
   notifyGameOver() {
-    this.conn.notifyGameOver(this.me()!.id);
+    this.socket?.emit(WebsocketMessages.NotifyGameOver, {
+      playerId: this.me()?.id,
+    });
+  }
+
+  private cleanupSocketConnection() {
+    if (this.socket) {
+      this.socket.removeAllListeners();
+      this.socket.disconnect();
+      this.socket = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSocketConnection();
   }
 
   /// Game engine methods
@@ -119,24 +166,8 @@ export class TetrisEngine {
     this.score.set(0);
     this.placedPieces.set(0);
 
-    let currentInterval: number | undefined = undefined;
-
-    /**
-     * Game loop.
-     * This method is responsible for the main game loop,
-     * which changes every 10 seconds, updating the game speed.
-     */
-    timer(0, CYCLE_DURATION)
-      .pipe(
-        switchMap(() => {
-          currentInterval = currentInterval
-            ? Math.max(MIN_INTERVAL, currentInterval - INTERVAL_STEP)
-            : BASE_INTERVAL;
-
-          return interval(currentInterval);
-        }),
-        takeUntil(this.gameOver$.pipe(filter((_) => _ === true)))
-      )
+    interval(1000)
+      .pipe(takeUntil(this.gameOver$.pipe(filter((_) => _ === true))))
       .subscribe({
         next: this.tick.bind(this),
         error: (err) => console.error('Error in game loop:', err),
@@ -150,6 +181,7 @@ export class TetrisEngine {
   private tick() {
     this.movingPiece = this.movingPiece || this.currentPiece();
     if (this.canMoveDown()) {
+      console.log('Piece can move down');
       this.movingPiece = {
         shape: this.movingPiece.shape,
         color: this.movingPiece.color,
@@ -209,6 +241,7 @@ export class TetrisEngine {
    * making it a permanent part of the game state.
    */
   private lockPiece() {
+    console.log('Locking piece...');
     if (!this.movingPiece) return;
     this.movingPiece.shape.forEach((row, y) => {
       row.forEach((value, x) => {
@@ -230,6 +263,7 @@ export class TetrisEngine {
    * It also updates the score based on the number of lines cleared.
    */
   private clearLines() {
+    console.log('Clearing lines...');
     let linesCleared = 0;
     for (let y = BOARD_HEIGHT - 1; y >= 0; y--) {
       if (this.auxBoard[y].every((cell) => cell !== '')) {
@@ -252,6 +286,7 @@ export class TetrisEngine {
    * ensuring that the board reflects the current state of the game.
    */
   private updateBoard() {
+    console.log('Updating board...', this.movingPiece);
     const tempBoard = this.auxBoard.map((row) => [...row]);
     if (this.movingPiece) {
       this.movingPiece.shape.forEach((row, y) => {

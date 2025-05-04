@@ -40,9 +40,8 @@ export class GameService {
 
     this.logger.log(`${playerName} player joined the game`);
 
-    if (this.gameState.players.length >= 1) {
-      // 2
-      this.countDown();
+    if (this.gameState.players.length >= 2) {
+      this.gettingReady();
     }
 
     return player;
@@ -66,7 +65,7 @@ export class GameService {
     }
   }
 
-  private countDown() {
+  private gettingReady() {
     this.gameState.status = GameStatus.GettingReady;
     this.startingCallback();
   }

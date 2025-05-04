@@ -12,8 +12,13 @@ export enum WebsocketMessages {
   GameState = 'gameState',
   Connect = 'connect',
   ConnectionError = 'connect_error',
-  CountDown = 'countDown',
+  Disconnect = 'disconnect',
   NotifyGameOver = 'notifyGameOver',
 }
 
 export const LOST = -1;
+
+export const BASE_INTERVAL = 1000;
+export const MIN_INTERVAL = 100;
+export const CYCLE_DURATION = 10000;
+export const INTERVAL_STEP = 100;

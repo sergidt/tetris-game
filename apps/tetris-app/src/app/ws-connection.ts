@@ -1,11 +1,5 @@
-import {
-  computed,
-  resource,
-  ResourceRef,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import { GameState, GameStatus, WebsocketMessages } from '@tetris-game/models';
+import { resource, ResourceRef, signal } from '@angular/core';
+import { GameState, WebsocketMessages } from '@tetris-game/models';
 
 import { io } from 'socket.io-client';
 
@@ -24,27 +18,31 @@ enum WebsocketStatus {
   Error = 'Error',
 }
 
-export type WebsocketReceivedMessage =
+export type WebsocketSendMessage =
   | {
-      type: WebsocketMessages.Connect;
+      type: WebsocketMessages.JoinGame;
+      payload: {
+        clientId: string;
+        name: string;
+      };
     }
   | {
-      type: WebsocketMessages.ConnectionError;
-      error: Error;
-    }
-  | {
-      type: WebsocketMessages.GameState;
-      payload: GameState;
-    }
-  | {
-      type: WebsocketMessages.CountDown;
-      countDown: number;
+      type: WebsocketMessages.NotifyGameOver;
+      payload: {
+        playerId: string;
+      };
     };
 
+export type WebsocketReceivedMessage = {
+  type: WebsocketMessages.GameState;
+  state: GameState;
+};
+
 export type WebsocketConnection = {
-  resource: ResourceRef<WebsocketReceivedMessage[] | undefined>;
-  connect: () => boolean;
-  //send: (message: WebsocketMessages, payload: any) => void;
+  resource: ResourceRef<WebsocketReceivedMessage | undefined>;
+  connected: () => boolean;
+  joinGame: (clientId: string, playerName: string) => void;
+  notifyGameOver: (playerId: string) => void;
 };
 
 export function websocketConnection(config: {
@@ -55,11 +53,7 @@ export function websocketConnection(config: {
   reconnection?: boolean;
   reconnectionAttempts?: number;
 }): WebsocketConnection {
-  const status: WritableSignal<WebsocketStatus> = signal(
-    WebsocketStatus.Connecting
-  );
-
-  const connected = computed(() => status() === WebsocketStatus.Connected);
+  const connected = signal(false);
 
   const socket = io(`${config.server}:${config.port}${config.namespace}`, {
     path: config.path,
@@ -68,43 +62,73 @@ export function websocketConnection(config: {
     reconnectionDelay: 1000,
   });
 
-  const wsResource: ResourceRef<WebsocketReceivedMessage[]> = resource({
-    request: () => status() === WebsocketStatus.Connecting,
-    stream: async ({ abortSignal }) => {
-      let messages: WebsocketReceivedMessage[] = [];
+  const wsResource: ResourceRef<WebsocketReceivedMessage | undefined> =
+    resource({
+      request: () => true,
+      stream: async ({ abortSignal }) => {
+        const messagesSignal = signal<
+          StreamItem<WebsocketReceivedMessage | undefined>
+        >({
+          value: undefined,
+        });
 
-      const messagesSignal = signal<StreamItem<WebsocketReceivedMessage[]>>({
-        value: messages,
-      });
+        //// Socket event listeners ////
+        socket?.on(WebsocketMessages.Connect, () => {
+          console.log('Connected to game server');
+          connected.set(true);
+        });
 
-      ////// SOCKET EVENTS HANDLERS //////
-      this.socket?.on(WebsocketMessages.Connect, () => {
-        this.log('Connected to game server');
-        this.socketStatus.set(WebsocketStatus.Connected);
-      });
+        socket?.on(WebsocketMessages.ConnectionError, (error) => {
+          console.error('Connection error:', error);
+          connected.set(false);
+          messagesSignal.set({ error });
+        });
 
-      this.socket?.on(WebsocketMessages.ConnectionError, (error) => {
-        console.error('Connection error:', error);
-        this.socketStatus.set(WebsocketStatus.Error);
-      });
+        socket?.on(WebsocketMessages.Disconnect, (reason) => {
+          console.log('Disconnected from game server:', reason);
+          connected.set(false);
+          messagesSignal.set({ value: undefined });
+        });
 
-      this.socket?.on(WebsocketMessages.GameState, (state: GameState) => {
-        this.log('Game state received:', state);
-        this.gameState.set(state);
-        if (state.status === GameStatus.Start) this.startGame();
-      });
+        socket?.on(WebsocketMessages.GameState, (state: GameState) => {
+          messagesSignal.set({
+            value: { type: WebsocketMessages.GameState, state },
+          });
+        });
 
-      this.socket?.on(WebsocketMessages.CountDown, (countDown: number) =>
-        this.countDown.set(3 - countDown)
-      );
-      //////
+        //////////////////////
 
-      abortSignal.addEventListener('abort', () => {
-        socket.disconnect();
-        console.log('WebSocket connection closed');
-      });
+        abortSignal.addEventListener('abort', () => {
+          if (abortSignal.aborted) {
+            socket.removeAllListeners();
+            socket.disconnect();
+            console.log('WebSocket connection closed');
+          }
+        });
 
-      return messagesSignal;
-    },
-  }) as ResourceRef<WebsocketReceivedMessage[]>;
+        return messagesSignal;
+      },
+    });
+
+  const sendMessage = (message: WebsocketSendMessage) =>
+    socket.emit(message.type, message.payload);
+
+  const joinGame = (clientId: string, playerName: string) =>
+    socket?.emit(WebsocketMessages.JoinGame, {
+      clientId,
+      name: playerName,
+    });
+
+  const notifyGameOver = (playerId: string) =>
+    socket?.emit(WebsocketMessages.NotifyGameOver, {
+      playerId,
+    });
+
+  return {
+    connected,
+    resource: wsResource,
+    joinGame,
+    notifyGameOver,
+    sendMessage,
+  } as WebsocketConnection;
 }

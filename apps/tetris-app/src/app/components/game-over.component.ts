@@ -15,7 +15,9 @@ import { TetrisEngine } from '../tetris.engine';
   template: `
     <h2>
       @if (score() === LOST) { You lost! Better luck next time! } @else { You
-      won! Congratulations! <br />Your score: {{ score() }} }
+      won! Congratulations!
+      <br />Your score: {{ score() }}
+      }
     </h2>
   `,
   styles: `

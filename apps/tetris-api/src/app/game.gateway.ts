@@ -70,9 +70,9 @@ export class GameGateway
 
   private countDown() {
     interval(1000)
-      .pipe(take(4))
+      .pipe(take(3))
       .subscribe({
-        next: (n) => this.server.emit(WebsocketMessages.CountDown, n),
+        next: (n) => this.logger.log(`Starting at ${3 - n}...`),
         complete: () =>
           this.gameService.startGame(this.broadcastGameState.bind(this)),
       });

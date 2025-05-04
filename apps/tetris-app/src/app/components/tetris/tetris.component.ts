@@ -38,8 +38,6 @@ export class TetrisComponent {
   tetris = inject(TetrisEngine);
 
   handleKeyboardEvent(event: KeyboardEvent) {
-    console.log(`Key pressed: ${event.key}`);
-    
     if (this.tetris.gameState().status === GameStatus.Playing) {
       switch (event.key) {
         case 'ArrowLeft':

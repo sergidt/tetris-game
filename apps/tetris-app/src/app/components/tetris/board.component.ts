@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TetrisEngine } from '../../tetris.engine';
+import { ScoreComponent } from './score.component';
 
 @Component({
   selector: 'app-tetris-board',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ScoreComponent],
   template: `
     <div class="game-board">
       @for (row of tetris.board(); track $index) {
@@ -16,11 +17,13 @@ import { TetrisEngine } from '../../tetris.engine';
       </div>
       }
     </div>
+
+    <app-score />
   `,
   styles: `
     .game-board {
-      border: 2px solid #333;
-      background-color: transparent;
+      border: 2px solid #888888;
+      background-color: #444444;
       border-radius: 8px;
       padding: 10px;
     }
@@ -32,7 +35,7 @@ import { TetrisEngine } from '../../tetris.engine';
     .cell {
       width: 30px;
       height: 30px;
-      border: 1px solid #333;
+      border: 1px solid #888888;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
