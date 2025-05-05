@@ -14,9 +14,9 @@ import { TetrisEngine } from '../tetris.engine';
   imports: [CommonModule, FormsModule],
   template: `
     <h2>
-      @if (score() === LOST) { You lost! Better luck next time! } @else { You
+      @if (lost() ) { You lost! Better luck next time! } @else { You
       won! Congratulations!
-      <br />Your score: {{ score() }}
+      <br />Your score: {{ tetris.score() }}
       }
     </h2>
   `,
@@ -33,12 +33,11 @@ import { TetrisEngine } from '../tetris.engine';
 })
 export class GameOverComponent {
   tetris = inject(TetrisEngine);
-  LOST = LOST;
 
-  score = computed(() => {
+  lost = computed(() => {
     const players = this.tetris.gameState().players;
     const me = this.tetris.me();
 
-    return players.find((player) => player.id === me!.id)!.score;
+    return players.find((player) => player.id === me!.id)!.score === LOST;
   });
 }
